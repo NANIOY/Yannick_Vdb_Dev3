@@ -15,6 +15,7 @@ const ClothingTile = ({ data }) => {
 
         return (
           <Pressable style={styles.container} onPress={() => navigation.navigate("Details", {
+            itemId: item.id,
             itemTitle: item.title.rendered,
             itemDescription: item.excerpt.rendered,
             itemPrice: itemPrice,

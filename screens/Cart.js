@@ -3,9 +3,6 @@ import { StyleSheet, Text, View, Pressable, Image } from 'react-native';
 import { useCartItem } from '../Components/CartItemContext';
 
 const Cart = ({ navigation, route }) => {
-  const { cartItems } = useCartItem();
-
-  const cartItem = cartItems.find(item => item.itemId === route.params.itemId);
 
   return (
     <View style={styles.container}>
@@ -14,14 +11,14 @@ const Cart = ({ navigation, route }) => {
         <View style={styles.box}>
           <View style={styles.itemInfo}>
             <Text style={styles.itemTitle}>{route.params.itemTitle}</Text>
-            <Text style={styles.itemAmount}>{route.params.selectedAmount}</Text>          
+            <Text style={styles.itemAmount}>{route.params.selectedAmount}</Text>
           </View>
         </View>
       </View>
 
       <View style={styles.buttonContainer}>
         <Pressable style={styles.payButton}>
-          <Text style={styles.buttonText}>Pay</Text>
+          <Text style={styles.buttonText}>Pay: €{route.params.itemPrice}</Text>
         </Pressable>
       </View>
     </View>

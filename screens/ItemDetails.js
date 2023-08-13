@@ -5,20 +5,16 @@ import { useCartItem } from '../Components/CartItemContext';
 const ItemDetails = ({ navigation, route }) => {
   const { cartItems, dispatch } = useCartItem();
 
-  // Find the cartItem based on itemId
   const cartItem = cartItems.find(item => item.itemId === route.params.itemId);
 
-  // Local state to manage the counter
   const [counter, setCounter] = useState(cartItem ? cartItem.selectedAmount : 0);
 
   const increase = () => {
-    console.log('Increasing counter');
     setCounter(prevCounter => prevCounter + 1);
     dispatch({ type: 'INCREMENT', itemId: route.params.itemId });
   };
-  
+
   const decrease = () => {
-    console.log('Decreasing counter');
     if (counter > 0) {
       setCounter(prevCounter => prevCounter - 1);
       dispatch({ type: 'DECREMENT', itemId: route.params.itemId });
@@ -30,6 +26,11 @@ const ItemDetails = ({ navigation, route }) => {
     .replace(/<\/p>/g, '')
     .replace(/€.{5}/g, '')
     .trim();
+
+  const priceMatch = route.params.itemPrice.match(/[\d.,]+/); // Match numeric characters along with comma and dot
+  const originalItemPrice = priceMatch ? parseFloat(priceMatch[0].replace(',', '.')) : 0; // Parse and replace comma with dot
+
+  const totalPrice = originalItemPrice * counter; // Calculate total price
 
   return (
     <View style={styles.container}>
@@ -56,14 +57,14 @@ const ItemDetails = ({ navigation, route }) => {
               itemTitle: route.params.itemTitle,
               itemDescription: route.params.itemDescription,
               imageUrl: route.params.imageUrl,
-              itemPrice: route.params.itemPrice, // Make sure to use "itemPrice" instead of "price"
-              selectedAmount: counter, // Use the "counter" value
+              itemPrice: totalPrice.toFixed(2), // Pass the calculated total price
+              selectedAmount: counter,
             })
           }>
           <Text style={[styles.buttonText, styles.cartText]}>Items in cart: {counter}</Text>
         </Pressable>
+        </View>
       </View>
-    </View>
   );
 };
 
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
     width: 384,
     height: 368,
     borderRadius: 2,
-    marginTop: -32,
+    marginTop: -200,
   },
   textContainer: {
     width: '100%',
@@ -105,14 +106,16 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   buttonContainer: {
-    flexDirection: 'column',
+    position: 'absolute',
+    bottom: 20,
+    width: '100%',
     alignItems: 'center',
-    marginTop: 16,
   },
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: '100%',
+    marginTop: -180,
   },
   button: {
     justifyContent: 'center',
@@ -133,12 +136,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#4A21ED',
     marginRight: 128,
   },
+
   buttonCart: {
-    width: '100%',
+    position: 'absolute',
+    bottom: -4,
+    backgroundColor: '#4A21ED',
+    width: 360,
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 2,
   },
   cartText: {
-    color: '#f5f5f5',
+    color: '#F5F5F5',
+    fontWeight: 'bold',
     fontSize: 20,
+    textTransform: 'uppercase',
   },
   plusText: {
     fontSize: 40,

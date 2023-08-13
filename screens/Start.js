@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View,} from 'react-native';
+import { StyleSheet, Text, View, } from 'react-native';
 
 import ClothingTile from '../Components/item';
 
@@ -15,12 +15,12 @@ const Start = ({ navigation, route }) => {
       );
 
       const json = await response.json();
-        setItems(json);
-    } 
-    
-      catch (error) {
-        console.error(error);
-      }
+      setItems(json);
+    }
+
+    catch (error) {
+      console.error(error);
+    }
 
   };
 
@@ -29,13 +29,13 @@ const Start = ({ navigation, route }) => {
   }, []);
 
   return (
- 
-    <View style={{ flexDirection: 'row', flexWrap:'wrap', alignItems: 'center', justifyContent: 'center', backgroundColor: '#050505', flex: 1, }}>
+
+    <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', backgroundColor: '#050505', flex: 1, }}>
 
       <ClothingTile data={clothing} />
-     
+
     </View>
-    
+
   );
 }
 

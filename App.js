@@ -12,7 +12,7 @@ const Stack = createNativeStackNavigator();
 async function loadCustomFont() {
   await Font.loadAsync({
     'Header': require('./assets/TwilioSansMono-Bold.otf'),
-    'Body': require ('./assets/Sloth-Regular.ttf'),
+    'Body': require('./assets/Sloth-Regular.ttf'),
   });
 }
 
