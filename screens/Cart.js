@@ -1,22 +1,29 @@
 import React from 'react';
 import { StyleSheet, Text, View, Pressable, Image } from 'react-native';
-import { useCartItem } from '../Components/CartItemContext';
 
 const Cart = ({ navigation, route }) => {
+  // Display the selected item and its quantity in the cart
 
   return (
     <View style={styles.container}>
+      {/* Display the selected item */}
       <View style={styles.itemContainer}>
+        {/* Display the item image */}
         <Image source={{ uri: route.params.imageUrl }} style={styles.clothingImage} />
+        {/* Container for item details */}
         <View style={styles.box}>
           <View style={styles.itemInfo}>
+            {/* Display the item title */}
             <Text style={styles.itemTitle}>{route.params.itemTitle}</Text>
+            {/* Display the selected quantity */}
             <Text style={styles.itemAmount}>{route.params.selectedAmount}</Text>
           </View>
         </View>
       </View>
 
+      {/* Container for payment button */}
       <View style={styles.buttonContainer}>
+        {/* Payment button */}
         <Pressable style={styles.payButton}>
           <Text style={styles.buttonText}>Pay: €{route.params.itemPrice}</Text>
         </Pressable>

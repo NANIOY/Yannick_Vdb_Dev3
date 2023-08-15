@@ -3,17 +3,22 @@ import { StyleSheet, Text, View, Pressable, Image } from 'react-native';
 import { useCartItem } from '../Components/CartItemContext';
 
 const ItemDetails = ({ navigation, route }) => {
+  // Access cartItems and dispatch function from CartItemContext
   const { cartItems, dispatch } = useCartItem();
 
+  // Find the cartItem based on itemId in route.params
   const cartItem = cartItems.find(item => item.itemId === route.params.itemId);
 
+  // State to manage the quantity of the selected item
   const [counter, setCounter] = useState(cartItem ? cartItem.selectedAmount : 0);
 
+  // Function to increase the quantity
   const increase = () => {
     setCounter(prevCounter => prevCounter + 1);
     dispatch({ type: 'INCREMENT', itemId: route.params.itemId });
   };
 
+  // Function to decrease the quantity, preventing negative values
   const decrease = () => {
     if (counter > 0) {
       setCounter(prevCounter => prevCounter - 1);
@@ -21,35 +26,43 @@ const ItemDetails = ({ navigation, route }) => {
     }
   };
 
+  // Remove HTML tags and currency symbol from item description
   const cleanDescription = route.params.itemDescription
     .replace(/<p.*?>/g, '')
     .replace(/<\/p>/g, '')
     .replace(/€.{5}/g, '')
     .trim();
 
-  const priceMatch = route.params.itemPrice.match(/[\d.,]+/); // Match numeric characters along with comma and dot
-  const originalItemPrice = priceMatch ? parseFloat(priceMatch[0].replace(',', '.')) : 0; // Parse and replace comma with dot
-
-  const totalPrice = originalItemPrice * counter; // Calculate total price
+  // Extract numeric price from itemPrice and calculate total price
+  const priceMatch = route.params.itemPrice.match(/[\d.,]+/);
+  const originalItemPrice = priceMatch ? parseFloat(priceMatch[0].replace(',', '.')) : 0;
+  const totalPrice = originalItemPrice * counter;
 
   return (
     <View style={styles.container}>
+      {/* Display item image */}
       <Image source={{ uri: route.params.imageUrl }} style={styles.clothingImage} />
 
       <View style={styles.textContainer}>
+        {/* Display item title */}
         <Text style={styles.clothingTitle}>{route.params.itemTitle}</Text>
+        {/* Display truncated item description */}
         <Text style={styles.description}>{cleanDescription.substring(0, 230)}</Text>
+        {/* Display item price */}
         <Text style={styles.itemPrice}>{route.params.itemPrice}</Text>
       </View>
       <View style={styles.buttonContainer}>
         <View style={styles.buttonRow}>
+          {/* Button to increase item quantity */}
           <Pressable style={[styles.button, styles.buttonPlus]} onPress={increase}>
             <Text style={[styles.buttonText, styles.plusText]}>+</Text>
           </Pressable>
+          {/* Button to decrease item quantity */}
           <Pressable style={[styles.button, styles.buttonMinus]} onPress={decrease}>
             <Text style={[styles.buttonText, styles.minusText]}>-</Text>
           </Pressable>
         </View>
+        {/* Button to go to cart */}
         <Pressable
           style={[styles.button, styles.buttonCart]}
           onPress={() =>
@@ -63,8 +76,8 @@ const ItemDetails = ({ navigation, route }) => {
           }>
           <Text style={[styles.buttonText, styles.cartText]}>Items in cart: {counter}</Text>
         </Pressable>
-        </View>
       </View>
+    </View>
   );
 };
 

@@ -1,7 +1,9 @@
 import React, { createContext, useContext, useReducer } from 'react';
 
+// Create a context for managing cart items
 const CartItemContext = createContext();
 
+// Define the reducer function for managing cart state
 const cartReducer = (state, action) => {
   // Handle state changes based on action type
   switch (action.type) {
@@ -22,12 +24,12 @@ const cartReducer = (state, action) => {
           ? { ...item, selectedAmount: item.selectedAmount - 1 }
           : item
       );
-    // Add other cases for other actions if needed
     default:
       return state;
   }
 };
 
+// Create a provider component to manage cart state
 export const CartItemProvider = ({ children }) => {
   const [cartItems, dispatch] = useReducer(cartReducer, []);
 
@@ -38,6 +40,7 @@ export const CartItemProvider = ({ children }) => {
   );
 };
 
+// Custom hook to easily access cart state and dispatch function
 export const useCartItem = () => {
   return useContext(CartItemContext);
 };

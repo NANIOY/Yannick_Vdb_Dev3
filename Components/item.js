@@ -3,17 +3,22 @@ import { useNavigation } from "@react-navigation/native";
 import { StyleSheet, Text, View, FlatList, Pressable, Image } from 'react-native';
 
 const ClothingTile = ({ data }) => {
+  // Get navigation instance from React Navigation
   const navigation = useNavigation();
 
   return (
     <FlatList
       data={data}
       renderItem={({ item }) => {
+        // Extract item price from the content using regex
         const priceMatch = item.content.rendered.match(/<p class="elementor-heading-title elementor-size-default">([^<]+)<\/p>/);
         const itemPrice = priceMatch ? priceMatch[1] : '';
+        
+        // Extract image URL from the content using regex
         const imageUrl = item.content.rendered.match(/<img[^>]+src="([^">]+)"/)?.[1];
 
         return (
+          // Render each clothing tile with a Pressable for navigation
           <Pressable style={styles.container} onPress={() => navigation.navigate("Details", {
             itemId: item.id,
             itemTitle: item.title.rendered,

@@ -7,8 +7,10 @@ import Cart from './screens/Cart';
 import * as Font from 'expo-font';
 import { CartItemProvider } from './Components/CartItemContext';
 
+// Create a stack navigator instance
 const Stack = createNativeStackNavigator();
 
+// Function to load custom fonts asynchronously
 async function loadCustomFont() {
   await Font.loadAsync({
     'Header': require('./assets/TwilioSansMono-Bold.otf'),
@@ -16,14 +18,18 @@ async function loadCustomFont() {
   });
 }
 
+// Main app component
 export default function App() {
+  // Load custom fonts on app start
   useEffect(() => {
     loadCustomFont();
   }, []);
 
+  // Render the app's UI components wrapped in the CartItemProvider context
   return (
     <CartItemProvider>
       <NavigationContainer>
+        {/* Define navigation stack screens */}
         <Stack.Navigator>
           <Stack.Screen name="Home" component={Start} />
           <Stack.Screen name="Details" component={ItemDetails} />
