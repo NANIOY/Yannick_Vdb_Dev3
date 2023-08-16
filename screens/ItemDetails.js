@@ -110,6 +110,7 @@ const styles = StyleSheet.create({
   },
   description: {
     color: '#F5F5F5',
+    fontFamily: 'Body',
   },
   itemPrice: {
     fontFamily: 'Body',

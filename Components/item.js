@@ -1,60 +1,132 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { StyleSheet, Text, View, FlatList, Pressable, Image } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Pressable, Image, TouchableOpacity } from 'react-native';
 
+// Function to extract price from content
+const extractPrice = (content) => {
+  // Extract price string using regular expression
+  const priceMatch = content.match(/<p class="elementor-heading-title elementor-size-default">([^<]+)<\/p>/);
+  const priceString = priceMatch ? priceMatch[1] : '';
+  const priceWithoutCurrency = priceString.replace(/[^\d.,]/g, ''); // Remove all except digits, comma, and period
+
+  // Parse price as float
+  const price = parseFloat(priceWithoutCurrency);
+
+  return price || 0;
+};
+
+// Function to format price with currency symbol
+const formatPrice = (price) => {
+  const formattedPrice = `€ ${price.toFixed(2)}`;
+  return formattedPrice;
+};
+
+// Main component
 const ClothingTile = ({ data }) => {
-  // Get navigation instance from React Navigation
   const navigation = useNavigation();
 
-  return (
-    <FlatList
-      data={data}
-      renderItem={({ item }) => {
-        // Extract item price from the content using regex
-        const priceMatch = item.content.rendered.match(/<p class="elementor-heading-title elementor-size-default">([^<]+)<\/p>/);
-        const itemPrice = priceMatch ? priceMatch[1] : '';
-        
-        // Extract image URL from the content using regex
-        const imageUrl = item.content.rendered.match(/<img[^>]+src="([^">]+)"/)?.[1];
+  // State to manage sorting order
+  const [sortOrder, setSortOrder] = useState("ascending");
 
-        return (
-          // Render each clothing tile with a Pressable for navigation
-          <Pressable style={styles.container} onPress={() => navigation.navigate("Details", {
-            itemId: item.id,
-            itemTitle: item.title.rendered,
-            itemDescription: item.excerpt.rendered,
-            itemPrice: itemPrice,
-            imageUrl: imageUrl,
-          })}>
-            <View style={styles.tile}>
-              {imageUrl && (
-                <Image
-                  source={{ uri: imageUrl }}
-                  style={styles.clothingImage}
-                />
-              )}
-              <View style={styles.titleAndPrice}>
-                <Text style={styles.tileTitle}>{item.title.rendered}</Text>
-                {itemPrice !== '' && (
-                  <Text style={styles.tilePrice}>{itemPrice}</Text>
+  // Function to toggle sorting order
+  const toggleSort = () => {
+    setSortOrder(prevOrder => (prevOrder === "ascending" ? "descending" : "ascending"));
+  };
+
+  // Sort data based on sorting order and extracted price
+  const sortedData = [...data].sort((a, b) => {
+    const priceA = extractPrice(a.content.rendered);
+    const priceB = extractPrice(b.content.rendered);
+
+    return sortOrder === "ascending" ? priceA - priceB : priceB - priceA;
+  });
+
+  return (
+    <View style={styles.screenContainer}>
+      {/* Custom-styled button for toggling sort order */}
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.customButton}
+          onPress={toggleSort}
+        >
+          <Text style={styles.buttonText}>
+            Sorting price: {sortOrder === "ascending" ? "Ascending" : "Descending"}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* FlatList to display sorted data */}
+      <FlatList
+        data={sortedData}
+        style={styles.flatList}
+        renderItem={({ item }) => {
+          const imageUrl = item.content.rendered.match(/<img[^>]+src="([^">]+)"/)?.[1];
+
+          return (
+            <Pressable style={styles.container} onPress={() => navigation.navigate("Details", {
+              itemId: item.id,
+              itemTitle: item.title.rendered,
+              itemDescription: item.excerpt.rendered,
+              itemPrice: formatPrice(extractPrice(item.content.rendered)),
+              imageUrl: imageUrl,
+            })}>
+              {/* Individual item tile */}
+              <View style={styles.tile}>
+                {imageUrl && (
+                  <Image
+                    source={{ uri: imageUrl }}
+                    style={styles.clothingImage}
+                  />
                 )}
+                <View style={styles.titleAndPrice}>
+                  <Text style={styles.tileTitle}>{item.title.rendered}</Text>
+                  <Text style={styles.tilePrice}>
+                    {formatPrice(extractPrice(item.content.rendered))}
+                  </Text>
+                </View>
               </View>
-            </View>
-          </Pressable>
-        );
-      }}
-      keyExtractor={(item) => item.id.toString()}
-    />
+            </Pressable>
+          );
+        }}
+        keyExtractor={(item) => item.id.toString()}
+      />
+    </View>
   );
 };
 
+// Styles
 const styles = StyleSheet.create({
+  screenContainer: {
+    flex: 1,
+    marginTop: 0,
+  },
+  buttonContainer: {
+    paddingHorizontal: 16,
+    marginBottom: 16,
+  },
+  customButton: {
+    backgroundColor: '#4A21ED',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 2,
+    alignItems: 'center',
+  },
+  buttonText: {
+    fontFamily: 'Body',
+    fontWeight: 'bold',
+    fontSize: 14,
+    textTransform: 'uppercase',
+    color: '#F5F5F5',
+  },
+  flatList: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
-    marginTop: 24,
+    marginTop: 12,
   },
   clothingImage: {
     width: 384,
